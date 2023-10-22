@@ -28,12 +28,20 @@ def split(request):
         error=request.POST.get('error')
         error=int(error)
         numb=request.POST.get('numb')
+        result = []
+        elements = numb.split(',')
+        for element in elements:
+            if '-' in element:
+                start, end = map(int, element.split('-'))
+                result.extend(range(start, end + 1))
+            else:
+                result.append(int(element))
         input_pdf_file = request.FILES["inputFile"]
         # document=FilesUpload.objects.create(file=input_pdf_file)
         # document.save()
         # return HttpResponse("Uploaded")
         output_pdf_file = './static/output.pdf'
-        desired =[int(x) for x in numb.split(",")]
+        desired =result
         extract_pages_to_single_pdf(input_pdf_file, output_pdf_file, desired,error)
         variables={
             "error":error,
@@ -43,3 +51,4 @@ def split(request):
         print(type(numb[0]))
         return render(request,'out.html',variables)
     return render(request,'form.html')
+
